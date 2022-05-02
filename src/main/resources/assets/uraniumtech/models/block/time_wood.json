@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "up": "uraniumtech:block/time_wood_top",
+    "down": "uraniumtech:block/time_wood_bottom",
+    "side": "uraniumtech:block/time_wood"
+  }
+}

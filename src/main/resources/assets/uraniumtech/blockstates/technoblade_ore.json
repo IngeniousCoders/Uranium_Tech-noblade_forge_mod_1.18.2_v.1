@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "techno_stages=0": {
+      "model": "uraniumtech:block/technoblade_ore_stage_0"
+    },
+    "techno_stages=1": {
+      "model": "uraniumtech:block/technoblade_ore_stage_1"
+    },
+    "techno_stages=2": {
+      "model": "uraniumtech:block/technoblade_ore_stage_2"
+    },
+    "techno_stages=3": {
+      "model": "uraniumtech:block/technoblade_ore_stage_3"
+    },
+    "techno_stages=4": {
+      "model": "uraniumtech:block/technoblade_ore_stage_4"
+    },
+    "techno_stages=5": {
+      "model": "uraniumtech:block/technoblade_ore_stage_5"
+    }
+  }
+}
