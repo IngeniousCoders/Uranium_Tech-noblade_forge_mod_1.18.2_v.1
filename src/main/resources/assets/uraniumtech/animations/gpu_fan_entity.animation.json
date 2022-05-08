@@ -1,0 +1,125 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.gpu_fan_entity.lift_off_start": {
+			"animation_length": 4,
+			"blend_weight": "5",
+			"bones": {
+				"bone": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.5": {
+							"vector": [2.5, 0, 0],
+							"easing": "step"
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, -1, 0]
+						},
+						"1.0": {
+							"vector": [0, 1, 0]
+						}
+					}
+				},
+				"fans": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"4.0": {
+							"vector": [0, -360, 0]
+						}
+					}
+				}
+			}
+		},
+		"animation.gpu_fan_entity.flying": {
+			"loop": true,
+			"animation_length": 4,
+			"blend_weight": "10",
+			"bones": {
+				"bone": {
+					"rotation": {
+						"vector": [2.5, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"fans": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"4.0": {
+							"vector": [0, 360, 0]
+						}
+					}
+				}
+			}
+		},
+		"animation.gpu_fan_entity.idle": {
+			"loop": true,
+			"animation_length": 4,
+			"blend_weight": "10",
+			"bones": {
+				"bone": {
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"fans": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"4.0": {
+							"vector": [0, 180, 0]
+						}
+					}
+				}
+			}
+		},
+		"animation.gpu_fan_entity.stop": {
+			"animation_length": 4,
+			"blend_weight": "10",
+			"bones": {
+				"bone": {
+					"rotation": {
+						"0.0": {
+							"vector": [2.5, 0, 0]
+						},
+						"1.9833": {
+							"vector": [0, 0, 0]
+						},
+						"3.5": {
+							"vector": [0, 0, 0]
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.5": {
+							"vector": [0, -1, 0]
+						}
+					}
+				},
+				"fans": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"4.0": {
+							"vector": [0, 360, 0]
+						}
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}
