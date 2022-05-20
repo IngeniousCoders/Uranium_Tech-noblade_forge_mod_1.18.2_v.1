@@ -17,7 +17,7 @@ public class ModEntities {
 
     public static final RegistryObject<EntityType<GPUFanEntity>> GPU_FAN = ENTITY_TYPES.register("gpu_fan",
             () -> EntityType.Builder.of(GPUFanEntity::new, MobCategory.CREATURE)
-                    .sized(5f, 1f)
+                    .sized(5f, 1f).clientTrackingRange(100)
                     .build(new ResourceLocation(UraniumTechNoblade.MOD_ID, "gpu_fan").toString()));
 
 

@@ -3,19 +3,29 @@ package net.ingeniousmc.uraniumtech.entity.custom.gpu_fan;
 import net.ingeniousmc.uraniumtech.entity.ModEntities;
 import net.ingeniousmc.uraniumtech.entity.custom.gpu_fan.variants.GPUFanEntityVariant;
 import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -27,20 +37,26 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.function.Predicate;
 
-public class GPUFanEntity extends FlyingMob implements PlayerRideable,IAnimatable {
+public class GPUFanEntity extends Bat implements PlayerRideable,IAnimatable {
     private AnimationFactory factory = new AnimationFactory(this);
-    //entity stuff
-    public static final Predicate<LivingEntity> PREY_SELECTOR = (p_30437_) -> {
-        EntityType<?> entitytype = p_30437_.getType();
-        return entitytype == EntityType.SHEEP || entitytype == EntityType.RABBIT
-                || entitytype == EntityType.COW || entitytype == EntityType.CHICKEN || entitytype == EntityType.PIG ||
-                entitytype == ModEntities.GPU_FAN.get();
-    };
+    private int nextHeightOffsetChangeTick;
+    private float allowedHeightOffset = 10.5F;
 
-    public GPUFanEntity(EntityType<? extends FlyingMob> entityType, Level level) {
+    private static final EntityDataAccessor<Boolean> IDLE =
+            SynchedEntityData.defineId(GPUFanEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IDLE_FLYING =
+            SynchedEntityData.defineId(GPUFanEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> POWERED_OFF =
+            SynchedEntityData.defineId(GPUFanEntity.class, EntityDataSerializers.BOOLEAN);
+
+    @javax.annotation.Nullable
+    private BlockPos targetPosition;
+    //entity stuff
+
+    public GPUFanEntity(EntityType<? extends Bat> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new GPUFlyingMovenmentController(this, 10, false);
     }
+
     public static AttributeSupplier setAttributes(){
         return Animal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20000000)
@@ -48,16 +64,37 @@ public class GPUFanEntity extends FlyingMob implements PlayerRideable,IAnimatabl
                 .add(Attributes.FLYING_SPEED, 1)
                 .build();
     }
-    protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(3, new FollowMobGoal(this, 1.0D, 3.0F, 7.0F));
+    protected void registerGoals(){
+
     }
     ////flying logic
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.gpu_fan_entity.idle", true));
+        if (event.isMoving()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.gpu_fan_entity.spinning", true));
+            return PlayState.CONTINUE;
+
+        }
+
         return PlayState.CONTINUE;
     }
+    public void aiStep() {
+        super.aiStep();
+    }
+    protected void customServerAiStep() {
+        --this.nextHeightOffsetChangeTick;
+        if (this.nextHeightOffsetChangeTick <= 10) {
+            this.nextHeightOffsetChangeTick = 100;
+            this.allowedHeightOffset = 3F + (float)this.random.nextGaussian() * 3.0F;
+        }
+        super.customServerAiStep();
+        }
+
+
+    protected Entity.MovementEmission getMovementEmission() {
+        return Entity.MovementEmission.EVENTS;
+    }
+
 
     ///variants logic
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_146746_, DifficultyInstance p_146747_,
@@ -94,20 +131,18 @@ public class GPUFanEntity extends FlyingMob implements PlayerRideable,IAnimatabl
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(DATA_ID_TYPE_VARIANT, 0);
+        this.entityData.define(POWERED_OFF, false);
+        this.entityData.define(IDLE, false);
+        this.entityData.define(IDLE_FLYING, true);
     }
-
-
-
-
-
-///
+    ///
     @Override
     public void registerControllers(AnimationData data) {
-        data.addAnimationController(new AnimationController(this, "controller",
-                0, this::predicate));
     }
     @Override
     public AnimationFactory getFactory() {
         return factory;
     }
+
+
 }
